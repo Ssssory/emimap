@@ -1,12 +1,14 @@
-ARG version
-FROM node:${version}-alpine
+ARG NODE_VERSION
+FROM node:${NODE_VERSION}-alpine
+ARG NODE_ENV
+ENV NODE_ENV_IN ${NODE_ENV}
 WORKDIR /app
 
 RUN apk update && \
-    apk upgrade && \
-    apk add git
+   apk upgrade && \
+   apk add git
 
 COPY ./app .
 EXPOSE 3000
 
-CMD ["node", "app/ping.js"]
+RUN if [ "$NODE_ENV_IN" != "production" ]; then npm run dev; else npm run start;fi
